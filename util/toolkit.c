@@ -30,18 +30,33 @@ char* validate_file(char* file_name) {
 }
 
 char* strip_quotes(char* quoted_string) {
+//    char* string_copy = strdup(quoted_string);
     char* string_copy = strdup(quoted_string);
+    char* start = string_copy;
     char* found = NULL;
+//    char* it_worked;
+
+    printf("Here\n");
 
     while ((found = strsep(&string_copy, "\"")) != NULL) {
+        printf("Loop\n");
         if (strlen(found) > 0) {
-            free(string_copy);
+//            free(string_copy);
 //            printf("FOUND: [%s]\n", found);
-            return found;
+//            it_worked = found;
+            free(start);
+//            free(string_copy);
+            printf("I just wan tto return\n");
+            return strdup(found);
         }
     }
-    free(string_copy);
+//    it_worked = strdup(it_worked);
+//    free(string_copy);
+//    free(found);
+//    free(string_copy);
+    printf("Nothing\n");
     return quoted_string;
+//    return quoted_string;
 }
 
 float string_to_float(char* string) {

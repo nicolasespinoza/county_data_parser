@@ -26,8 +26,10 @@ int safe_data_fetch_int(struct arraylist* split_data, int index) {
     char* data_no_quotes = strip_quotes(array_list_get_item(split_data, index));
     int converted = string_to_int(data_no_quotes);
     if (converted == -1) {
+        free(data_no_quotes);
         return -1;
     }
+    free(data_no_quotes);
     return converted;
 }
 
@@ -39,9 +41,11 @@ float safe_data_fetch_float(struct arraylist* split_data, int index) {
     char* data_no_quotes = strip_quotes(array_list_get_item(split_data, index));
     float converted = string_to_float(data_no_quotes);
     if (converted == -1) {
+        free(data_no_quotes);
         // print something here with the line #. potentially send out to external function
         return -1.0f;
     }
+    free(data_no_quotes);
     return converted;
 }
 
@@ -152,16 +156,44 @@ void county_array_list_cleanup(struct arraylist* county_data) {
     free(county_data);
 }
 
-int main(int number_of_arguments, char* arguments[]) {
-    if (number_of_arguments == 3) {
-        char* demographics_file_name = validate_file(arguments[1]);
-        char* operations_file_name = validate_file(arguments[2]);
-
-        struct arraylist* county_data = parse_demographics_file(demographics_file_name);
-        county_array_list_cleanup(county_data);
-    } else {
-        printf("Syntax: ./a.out <demographics file> <operations file>\n");
+char* experiment(char* quoted_string) {
+    char* copy = strdup(quoted_string);
+    char* token = strtok(copy, "\"");
+    while (token != NULL) {
+        printf("Test: %s\n", token);
+        if (strlen(token) > 0) {
+//            free(copy);
+            return token;
+        }
+        token = strtok(NULL, "\"");
     }
+//    free(copy);
+    return quoted_string;
+}
+
+int main(int number_of_arguments, char* arguments[]) {
+//    if (number_of_arguments == 3) {
+//        char* demographics_file_name = validate_file(arguments[1]);
+//        char* operations_file_name = validate_file(arguments[2]);
+//
+//        struct arraylist* county_data = parse_demographics_file(demographics_file_name);
+//        county_array_list_cleanup(county_data);
+//    } else {
+//        printf("Syntax: ./a.out <demographics file> <operations file>\n");
+//    }
+
+    char* quoted_string = "\"Test\"";
+//    printf("My string before anything: %s\n", quoted_string);
+    char* fixed = experiment(quoted_string);
+    printf("Fixed: %s\n", fixed);
+//    printf("Afterwards %s\n", quoted_string);
+
+//    char* original = "\"Test\"";
+//    printf("BEFORE ANYTHING: %s\n", original);
+//    char* stripped = strip_quotes(original);
+//    printf("Without quotes: %s\n", stripped);
+//    free(stripped);
+
     return 0;
 }
 
