@@ -1,0 +1,19 @@
+1. Percentage of the population below the poverty level in the counties for which the high school or above completion percentage is <= 80 percent.
+
+filter:Education.High School or Higher:le:80
+percent:Income.Persons Below Poverty Level
+
+* Percentage of the population below the poverty level in the counties for which the bachelor's or above completion percentage is >= 40 percent.
+
+filter:Education.Bachelor's Degree or Higher:ge:40
+percent:Income.Persons Below Poverty Level
+
+* (For an Ethnicities column of your choose) Percentage of the population below the poverty level in the counties for which the selected ethnicity is >= 40 percent.
+
+filter:Ethnicities.Asian Alone:ge:40
+percent:Income.Persons Below Poverty Level
+
+* (For the Ethnicities column) Percentage of the population below the poverty level in the counties for which the selected ethnicity is <= 40 percent.
+
+filter:Ethnicities.Asian Alone:le:40
+percent:Income.Persons Below Poverty Level
