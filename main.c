@@ -3,9 +3,9 @@
 #include <string.h>
 #include "util/toolkit.h"
 #include "util/array_list/array_list.h"
-#include "county_info.h"
 #include "util/array_list/farray_list.h"
 #include "util/array_list/iarray_list.h"
+#include "county_info.h"
 #include "operator_handler.h"
 
 // TODO:
@@ -49,8 +49,6 @@ struct arraylist* parse_operations_file(char* file_name) {
     char* line_buffer = NULL;
     size_t line_buffer_size = 0;
     int line_size;
-    //ssize_t line_size;
-    //size_t line_size;
     int line_count = 0;
 
     line_size = getline(&line_buffer, &line_buffer_size, operations_file); // twice to ignore first line
@@ -69,7 +67,6 @@ struct arraylist* parse_operations_file(char* file_name) {
 void county_array_list_cleanup(struct arraylist* county_data) {
     for (int i = 0; i < county_data->number_of_items; i++) {
         county_cleanup(county_data->data[i]);
-//        free(county_data->data[i]); // THIS IS NOT NEEDED
     }
     free(county_data->data);
     free(county_data);

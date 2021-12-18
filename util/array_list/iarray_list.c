@@ -32,7 +32,7 @@ void iarray_list_add_to_end(struct iarraylist* list, int item) {
 int iarray_list_get_item(struct iarraylist* list, int index) {
     if (index >= list->number_of_items) {
 //        printf("Index %d out of bounds for array list size %d\n", index, list->number_of_items);
-        return NULL;
+        return -1;
     }
     return list->data[index];
 }
