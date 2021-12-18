@@ -39,7 +39,7 @@ int iarray_list_get_item(struct iarraylist* list, int index) {
 
 void iarray_list_cleanup(struct iarraylist* list) {
 //    for (int i = 0; i < list->number_of_items; i++) {
-//        free(list->data[i]);
+//        free(list->data-files[i]);
 //    }
     free(list->data);
     free(list);

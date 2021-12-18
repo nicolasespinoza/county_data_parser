@@ -37,7 +37,7 @@ int identifier_to_index(char* identifier) {
     } else if (strcmp(identifier, "Income.Per Capita Income") == 0) { return 1;
     } else if (strcmp(identifier, "Income.Persons Below Poverty Level") == 0) { return -1;
     } else {
-        printf("Could not match index with identifier %s\n", identifier);
+        printf("Could not match index with identifier [%s]\n", identifier);
         return 0; // returns 0
     }
 }
@@ -58,13 +58,12 @@ double get_data(struct county_info* county, char* field_name, struct arraylist* 
     } else if (strcmp(category_name, "Education") == 0) {
         return farray_list_get_item(county->educations, index);
     } else {
-        printf("Problem\n");
+        printf("Invalid field name [%s]\n", field_name);
         return -1.0;
     }
 }
 
 double get_county_field_data(struct county_info* county, char* field_name) {
-    // TODO: currently ONLY supports eth, income, and education
     if (strcmp(field_name, "Population") == 0 || strcmp(field_name, "County") == 0 || strcmp(field_name, "State") == 0) {
         return -404.0;
     }
@@ -86,7 +85,6 @@ double get_population_of_field_x(struct arraylist* county_data, char* field_name
             continue;
         }
         double data = get_county_field_data(county, field_name);
-        printf("Getting [%f] data from county [%s] for field [%s]\n", data, get_state(county), field_name);
         affected_population += data;
     }
 
@@ -105,7 +103,6 @@ double get_affected_population(struct arraylist* county_data, char* field_name) 
         double county_population = county->population_2014;
         double affected_percentage = get_county_field_data(county, field_name) / 100.0;
         affected_population += (county_population * affected_percentage);
-//        printf("[%f]PERC of people of %f: %f\n", affected_percentage, county_population, affected_population);
     }
     return affected_population;
 }
@@ -182,12 +179,12 @@ void handle_operation(struct arraylist* county_data, char* operation) {
                 }
 
                 if (strcmp(comparison_type, "ge") == 0) {
-                    if (data < comparison_number) {
+                    if (data <= comparison_number) {
                         county_cleanup(county);
                         array_list_nullify_index(county_data, i);
                     }
                 } else if (strcmp(comparison_type, "le") == 0) {
-                    if (data > comparison_number) {
+                    if (data >= comparison_number) {
                         county_cleanup(county);
                         array_list_nullify_index(county_data, i);
                     }
@@ -199,6 +196,8 @@ void handle_operation(struct arraylist* county_data, char* operation) {
 
         }
 
+    } else {
+        fprintf(stderr, "Invalid operation syntax: [%s] Skipping operation...\n", operation);
     }
 
     array_list_cleanup(arguments);

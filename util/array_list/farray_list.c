@@ -39,7 +39,7 @@ float farray_list_get_item(struct farraylist* list, int index) {
 
 void farray_list_cleanup(struct farraylist* list) {
 //    for (int i = 0; i < list->number_of_items; i++) {
-//        free(list->data[i]);
+//        free(list->data-files[i]);
 //    }
     free(list->data);
     free(list);

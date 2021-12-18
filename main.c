@@ -5,14 +5,8 @@
 #include "util/array_list/array_list.h"
 #include "util/array_list/farray_list.h"
 #include "util/array_list/iarray_list.h"
-#include "util/array_list/filter_list.h"
 #include "county_info.h"
 #include "operator_handler.h"
-
-// TODO:
-// - 'If an entry in the file is malformed (e.g., there are missing fields or the data within a field cannot be
-//      properly converted), then print an error message to stderr indicating the line number of the entry,
-//      skip that entry, and continue processing"
 
 struct arraylist* parse_demographics_file(char* file_name) {
     struct arraylist* county_data = array_list_new(sizeof(struct county_info));
@@ -27,12 +21,11 @@ struct arraylist* parse_demographics_file(char* file_name) {
 
     line_size = getline(&line_buffer, &line_buffer_size, demographics_file); // twice to ignore first line
     while (line_size >= 0) {
-        struct county_info* county = county_create_from_line(line_buffer);
+        struct county_info* county = county_create_from_line(line_buffer, line_count);
         if (county != NULL) {
-//            county_print(county);
             array_list_add_to_end(county_data, county);
         } else {
-            printf("County data on line %d could not be processed. Skipping...\n", line_count);
+            fprintf(stderr, "County data on line %d could not be processed. Skipping...\n", line_count);
         }
         line_size = getline(&line_buffer, &line_buffer_size, demographics_file); // move to next line
         line_count++;
@@ -91,8 +84,6 @@ int main(int number_of_arguments, char* arguments[]) {
             handle_operation(county_data, operation_string);
         }
 
-//        handle_operation(county_data, "filter:Persons Below Poverty Level:ge:");
-
         county_array_list_cleanup(county_data);
         array_list_cleanup(operations);
     } else {
@@ -101,16 +92,3 @@ int main(int number_of_arguments, char* arguments[]) {
 
     return 0;
 }
-
-//int main() {
-//    struct filterlist* list = filter_list_new(sizeof(char*));
-//    char* item1 = "WOW LOL";
-//    char* item2 = "AYYYY";
-//    char* item3 = "IT WORKS???";
-//    filter_list_add(list, "key1", item1);
-//    filter_list_add(list, "key2", item2);
-//    filter_list_add(list, "key4", item3);
-//
-//    printf("Number: %d\n", list->number_of_items);
-//    printf("Item? %s\n", (char*) filter_list_get_item(list, "key2"));
-//}

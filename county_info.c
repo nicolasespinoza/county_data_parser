@@ -78,9 +78,13 @@ float safe_data_fetch_float(struct arraylist* split_data, int index) {
     return converted;
 }
 
-struct county_info* county_create_from_line(char* line) {
+struct county_info* county_create_from_line(char* line, int line_count) {
     struct arraylist* split_data = split(line, ",");
     struct county_info* county = _county_init();
+
+    if (split_data->number_of_items != 52) { // line is malformed
+        fprintf(stderr, "Line %d was malformed. Skipping...", line_count);
+    }
 
     // General (County Name, State)
     for (int i = 0; i < county->number_of_general_data; i++) {

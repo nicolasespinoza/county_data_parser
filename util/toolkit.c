@@ -46,9 +46,8 @@ float string_to_float(char* string) {
 
 int string_to_int(char* value) {
     char* value_copy = strdup(value);
-//    printf("Here: [%s]\n", value);
 
-    if (strcmp(value, "0") == 0 || strcmp(value, "0.0") == 0) {
+    if (strlen(value) == 0 || strcmp(value, "0") == 0 || strcmp(value, "0.0") == 0) {
         free(value_copy);
         return 0;
     }

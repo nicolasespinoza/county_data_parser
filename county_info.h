@@ -44,6 +44,6 @@ struct county_info {
 };
 
 struct county_info* _county_init();
-struct county_info* county_create_from_line(char* line);
+struct county_info* county_create_from_line(char* line, int line_count);
 void county_print(struct county_info* county_info);
 void county_cleanup(struct county_info* county_info);
