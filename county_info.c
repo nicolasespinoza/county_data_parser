@@ -150,8 +150,8 @@ void county_print(struct county_info* county_info) {
     printf("\n%s, %s\n", (char*) array_list_get_item(county_info->general, 0), (char*) array_list_get_item(county_info->general, 1));
     printf("\tPopulation: %d\n", county_info->population_2014);
     printf("\tEducation\n");
-    printf("\t\t>= High School: %f\n", farray_list_get_item(county_info->educations, 0));
-    printf("\t\t>= Bachelor's: %f\n", farray_list_get_item(county_info->educations, 1));
+    printf("\t\t>= High School: %f\n", farray_list_get_item(county_info->educations, 1));
+    printf("\t\t>= Bachelor's: %f\n", farray_list_get_item(county_info->educations, 0));
     printf("\tEthnicities\n");
     printf("\t\tAmerican Indian and Alaska Native Alone: %f\n", farray_list_get_item(county_info->ethnicities, 0));
     printf("\t\tAsian Alone: %f\n", farray_list_get_item(county_info->ethnicities, 1));

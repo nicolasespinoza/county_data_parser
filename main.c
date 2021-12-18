@@ -5,6 +5,7 @@
 #include "util/array_list/array_list.h"
 #include "util/array_list/farray_list.h"
 #include "util/array_list/iarray_list.h"
+#include "util/array_list/filter_list.h"
 #include "county_info.h"
 #include "operator_handler.h"
 
@@ -23,6 +24,7 @@ struct arraylist* parse_demographics_file(char* file_name) {
     int line_count = 0;
 
     getline(&line_buffer, &line_buffer_size, demographics_file); // first line of the file
+
     line_size = getline(&line_buffer, &line_buffer_size, demographics_file); // twice to ignore first line
     while (line_size >= 0) {
         struct county_info* county = county_create_from_line(line_buffer);
@@ -65,8 +67,12 @@ struct arraylist* parse_operations_file(char* file_name) {
 }
 
 void county_array_list_cleanup(struct arraylist* county_data) {
-    for (int i = 0; i < county_data->number_of_items; i++) {
-        county_cleanup(county_data->data[i]);
+    if (county_data->real_item_count > 0) {
+        for (int i = 0; i < county_data->number_of_items; i++) {
+            if (county_data->data[i] != NULL) {
+                county_cleanup(county_data->data[i]);
+            }
+        }
     }
     free(county_data->data);
     free(county_data);
@@ -85,6 +91,8 @@ int main(int number_of_arguments, char* arguments[]) {
             handle_operation(county_data, operation_string);
         }
 
+//        handle_operation(county_data, "filter:Persons Below Poverty Level:ge:");
+
         county_array_list_cleanup(county_data);
         array_list_cleanup(operations);
     } else {
@@ -94,3 +102,15 @@ int main(int number_of_arguments, char* arguments[]) {
     return 0;
 }
 
+//int main() {
+//    struct filterlist* list = filter_list_new(sizeof(char*));
+//    char* item1 = "WOW LOL";
+//    char* item2 = "AYYYY";
+//    char* item3 = "IT WORKS???";
+//    filter_list_add(list, "key1", item1);
+//    filter_list_add(list, "key2", item2);
+//    filter_list_add(list, "key4", item3);
+//
+//    printf("Number: %d\n", list->number_of_items);
+//    printf("Item? %s\n", (char*) filter_list_get_item(list, "key2"));
+//}

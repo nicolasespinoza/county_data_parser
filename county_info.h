@@ -5,8 +5,9 @@ struct county_info {
     struct arraylist* general;
 
     // Education
-    // 0 = "Education.High School or Higher"
+    // NOTE: switched based on csv order
     // 1 = "Education.Bachelor's Degree or Higher"
+    // 0 = "Education.High School or Higher"
     struct farraylist* educations;
 
     // Ethnicities

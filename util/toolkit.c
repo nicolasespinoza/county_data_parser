@@ -46,6 +46,7 @@ float string_to_float(char* string) {
 
 int string_to_int(char* value) {
     char* value_copy = strdup(value);
+//    printf("Here: [%s]\n", value);
 
     if (strcmp(value, "0") == 0 || strcmp(value, "0.0") == 0) {
         free(value_copy);
@@ -56,8 +57,8 @@ int string_to_int(char* value) {
     long converted = strtol(value_copy, &filler, 10);
 
     if (converted == 0) {
+        printf("[%s] is not a valid integer, ignoring\n", value_copy);
         free(value_copy);
-        printf("[%s] is not a valid integer, ignoring\n", value);
         return -1;
     }
 

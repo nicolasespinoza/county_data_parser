@@ -28,6 +28,7 @@ void array_list_add_to_end(struct arraylist* list, void* item) {
     resize_if_necessary(list);
     list->data[list->number_of_items] = item; // NOTE: there is no copying done here
     list->number_of_items += 1;
+    list->real_item_count += 1;
 }
 
 void* array_list_get_item(struct arraylist* list, int index) {
@@ -36,6 +37,14 @@ void* array_list_get_item(struct arraylist* list, int index) {
         return NULL;
     }
     return list->data[index];
+}
+
+void array_list_nullify_index(struct arraylist* list, int index) {
+    if (index >= list->number_of_items) { // invalid index
+        return;
+    }
+    list->data[index] = NULL;
+    list->real_item_count--;
 }
 
 void array_list_cleanup(struct arraylist* list) {
