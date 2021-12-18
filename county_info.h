@@ -42,6 +42,7 @@ struct county_info {
     struct iarraylist* income_indexes;
 };
 
-struct county_info* county_info_create();
+struct county_info* _county_init();
+struct county_info* county_create_from_line(char* line);
 void county_print(struct county_info* county_info);
 void county_cleanup(struct county_info* county_info);
