@@ -30,47 +30,24 @@ char* validate_file(char* file_name) {
 }
 
 char* strip_quotes(char* quoted_string) {
-//    char* string_copy = strdup(quoted_string);
-    char* string_copy = strdup(quoted_string);
-    char* start = string_copy;
-    char* found = NULL;
-//    char* it_worked;
-
-    printf("Here\n");
-
-    while ((found = strsep(&string_copy, "\"")) != NULL) {
-        printf("Loop\n");
-        if (strlen(found) > 0) {
-//            free(string_copy);
-//            printf("FOUND: [%s]\n", found);
-//            it_worked = found;
-            free(start);
-//            free(string_copy);
-            printf("I just wan tto return\n");
-            return strdup(found);
-        }
-    }
-//    it_worked = strdup(it_worked);
-//    free(string_copy);
-//    free(found);
-//    free(string_copy);
-    printf("Nothing\n");
-    return quoted_string;
-//    return quoted_string;
+    char* quoted_string_copy = strdup(quoted_string);
+    char* result = strtok(quoted_string_copy, "\"");
+    free(quoted_string_copy);
+    return result;
 }
 
 float string_to_float(char* string) {
-    float converted = strtof(string, NULL);
-    if (converted == 0.0 && strcmp(string, "0.0") != 0) {
-        return -1;
+    if (strcmp(string, "0.0") == 0 || strcmp(string, "0") == 0) {
+        return 0.0f;
     }
-    return converted;
+    float converted = strtof(string, NULL);
+    return converted == 0.0 ? -1 : converted;
 }
 
 int string_to_int(char* value) {
     char* value_copy = strdup(value);
 
-    if (strcmp(value, "0") == 0) {
+    if (strcmp(value, "0") == 0 || strcmp(value, "0.0") == 0) {
         free(value_copy);
         return 0;
     }
@@ -80,7 +57,7 @@ int string_to_int(char* value) {
 
     if (converted == 0) {
         free(value_copy);
-//        printf("[%s] is not a valid integer, exiting", value);
+        printf("[%s] is not a valid integer, ignoring\n", value);
         return -1;
     }
 
