@@ -58,6 +58,7 @@ int safe_data_fetch_int(struct arraylist* split_data, int index) {
     char* data_no_quotes = strip_quotes(array_list_get_item(split_data, index));
     int converted = string_to_int(data_no_quotes);
     if (converted == -1) {
+        free(data_no_quotes);
         return -404404404;
     }
     free(data_no_quotes);
@@ -71,9 +72,7 @@ float safe_data_fetch_float(struct arraylist* split_data, int index) {
     char* data_no_quotes = strip_quotes(array_list_get_item(split_data, index));
     float converted = string_to_float(data_no_quotes);
     if (converted == -1) {
-        for (int i = 0; i < 10; i++) {
-            printf("Here, value: %s\n", data_no_quotes);
-        }
+        free(data_no_quotes);
         return -1.0f;
     }
     free(data_no_quotes);
@@ -93,7 +92,6 @@ struct county_info* county_create_from_line(char* line, int line_count) {
         int general_index = iarray_list_get_item(county->general_indexes, i);
         char* converted = safe_data_fetch_string(split_data, general_index);
         if (converted != NULL) {
-//            array_list_add_to_end(county->general, strdup(converted));
             array_list_add_to_end(county->general, converted);
         } else {
             return NULL;
