@@ -29,18 +29,26 @@ char* validate_file(char* file_name) {
     return file_name;
 }
 
+//char* strip_quotes(char* quoted_string) {
+//    char* quoted_string_copy = strdup(quoted_string);
+//    char* result = strtok(quoted_string_copy, "\"");
+//    free(quoted_string_copy);
+//    return result;
+//}
+
 char* strip_quotes(char* quoted_string) {
-    char* quoted_string_copy = strdup(quoted_string);
-    char* result = strtok(quoted_string_copy, "\"");
-    free(quoted_string_copy);
-    return result;
+    struct arraylist* split_data = split(quoted_string, "\"");
+    char* unquoted_string = strdup(array_list_get_item(split_data, 1));
+    array_list_cleanup(split_data);
+    return unquoted_string;
 }
 
 float string_to_float(char* string) {
     if (strcmp(string, "0.0") == 0 || strcmp(string, "0") == 0) {
         return 0.0f;
     }
-    float converted = strtof(string, NULL);
+    char* filler = "";
+    float converted = strtof(string, &filler);
     return converted == 0.0 ? -1 : converted;
 }
 

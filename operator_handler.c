@@ -74,23 +74,6 @@ double get_county_field_data(struct county_info* county, char* field_name) {
     return data;
 }
 
-double get_population_of_field_x(struct arraylist* county_data, char* field_name) {
-    // ex: field_name=Education.Bachelor's Degree or Higher
-    // returns the number of people with Bachelor's degree or higher from each county summed up
-    double affected_population = 0;
-
-    for (int i = 0; i < county_data->number_of_items; i++) {
-        struct county_info* county = array_list_get_item(county_data, i);
-        if (county == NULL) {
-            continue;
-        }
-        double data = get_county_field_data(county, field_name);
-        affected_population += data;
-    }
-
-    return affected_population;
-}
-
 double get_affected_population(struct arraylist* county_data, char* field_name) {
     double affected_population = 0;
 
@@ -107,6 +90,91 @@ double get_affected_population(struct arraylist* county_data, char* field_name) 
     return affected_population;
 }
 
+void operation_population_total(struct arraylist* county_data) {
+    printf("2014 population: %d\n", get_total_population(county_data));
+}
+
+void operation_display(struct arraylist* county_data) {
+    for (int i = 0; i < county_data->number_of_items; i++) {
+        struct county_info* county = array_list_get_item(county_data, i);
+        if (county == NULL) {
+            continue;
+        }
+        county_print(county);
+    }
+}
+
+void operation_percent(struct arraylist* county_data, struct arraylist* arguments) {
+    char* field_name = array_list_get_item(arguments, 1);
+    double affected_population = get_affected_population(county_data, field_name);
+    double total_population = get_total_population(county_data);
+
+    double affected_percentage = (affected_population / total_population) * 100.0;
+    printf("2014 %s percentage: %f\n", field_name, affected_percentage);
+}
+
+void operation_filter_state(struct arraylist* county_data, struct arraylist* arguments) {
+    char* filter_state_abbreviation = array_list_get_item(arguments, 1);
+    int matching_states = 0;
+
+    for (int i = 0; i < county_data->number_of_items; i++) {
+        struct county_info* county = array_list_get_item(county_data, i);
+        if (county == NULL) {
+            continue;
+        }
+        char* county_state_abbreviation = get_state(county);
+
+        if (strcmp(filter_state_abbreviation, county_state_abbreviation) != 0) {
+            county_cleanup(county);
+            array_list_nullify_index(county_data, i);
+        } else {
+            matching_states++;
+        }
+    }
+
+    printf("Filter: state == %s (%d entries)\n", filter_state_abbreviation, county_data->real_item_count);
+}
+
+void operation_population(struct arraylist* county_data, struct arraylist* arguments) {
+    char* field_name = array_list_get_item(arguments, 1);
+    printf("2014 %s population: %f\n", field_name, get_affected_population(county_data, field_name));
+}
+
+void operation_filter(struct arraylist* county_data, struct arraylist* arguments) {
+    char* field_name = array_list_get_item(arguments, 1);
+    char* comparison_type = array_list_get_item(arguments, 2);
+    int comparison_number = string_to_int(array_list_get_item(arguments, 3));
+
+    for (int i = 0; i < county_data->number_of_items; i++) {
+        struct county_info* county = array_list_get_item(county_data, i);
+        if (county == NULL) {
+            continue;
+        }
+        double data = get_county_field_data(county, field_name);
+        if (data == -404.0) {
+            fprintf(stderr, "Field %s not permitted on filter operation\n", field_name);
+            return;
+        }
+
+        if (strcmp(comparison_type, "ge") == 0) {
+            if (data <= comparison_number) {
+                county_cleanup(county);
+                array_list_nullify_index(county_data, i);
+            }
+        } else if (strcmp(comparison_type, "le") == 0) {
+            if (data >= comparison_number) {
+                county_cleanup(county);
+                array_list_nullify_index(county_data, i);
+            }
+        }
+    }
+
+    printf("Filter: %s %s %d (%d entries)\n", field_name,
+           comparison_type,
+           comparison_number,
+           county_data->real_item_count);
+}
+
 void handle_operation(struct arraylist* county_data, char* operation) {
     struct arraylist* arguments = split(operation, ":");
     if (arguments->number_of_items == 0) {
@@ -116,86 +184,22 @@ void handle_operation(struct arraylist* county_data, char* operation) {
     char* arg0 = array_list_get_item(arguments, 0);
     if (arguments->number_of_items == 1) {
         if (strcmp(operation, "population-total") == 0) {
-            printf("2014 population: %d\n", get_total_population(county_data));
+            operation_population_total(county_data);
         } else if (strcmp(operation, "display") == 0) {
-            for (int i = 0; i < county_data->number_of_items; i++) {
-                struct county_info* county = array_list_get_item(county_data, i);
-                if (county == NULL) {
-                    continue;
-                }
-                county_print(county);
-            }
+            operation_display(county_data);
         }
     } else if (arguments->number_of_items == 2) {
-
         if (strcmp(arg0, "filter-state") == 0) {
-            char* filter_state_abbreviation = array_list_get_item(arguments, 1);
-            int matching_states = 0;
-
-            for (int i = 0; i < county_data->number_of_items; i++) {
-                struct county_info* county = array_list_get_item(county_data, i);
-                if (county == NULL) {
-                    continue;
-                }
-                char* county_state_abbreviation = get_state(county);
-
-                if (strcmp(filter_state_abbreviation, county_state_abbreviation) != 0) {
-                    county_cleanup(county);
-                    array_list_nullify_index(county_data, i);
-                } else {
-                    matching_states++;
-                }
-            }
-
-            printf("Filter: state == %s (%d entries)\n", filter_state_abbreviation, county_data->real_item_count);
+            operation_filter_state(county_data, arguments);
         } else if (strcmp(arg0, "population") == 0) {
-            char* field_name = array_list_get_item(arguments, 1);
-            printf("2014 %s population: %f\n", field_name, get_affected_population(county_data, field_name));
+            operation_population(county_data, arguments);
         } else if (strcmp(arg0, "percent") == 0) {
-            char* field_name = array_list_get_item(arguments, 1);
-
-            double affected_population = get_affected_population(county_data, field_name);
-            double total_population = get_total_population(county_data);
-
-            double affected_percentage = (affected_population / total_population) * 100.0;
-            printf("2014 %s percentage: %f\n", field_name, affected_percentage);
+            operation_percent(county_data, arguments);
         }
     } else if (arguments->number_of_items == 4) {
-
         if (strcmp(arg0, "filter") == 0) {
-            char *field_name = array_list_get_item(arguments, 1);
-            char *comparison_type = array_list_get_item(arguments, 2);
-            int comparison_number = string_to_int(array_list_get_item(arguments, 3));
-
-            for (int i = 0; i < county_data->number_of_items; i++) {
-                struct county_info* county = array_list_get_item(county_data, i);
-                if (county == NULL) {
-                    continue;
-                }
-                double data = get_county_field_data(county, field_name);
-                if (data == -404.0) {
-                    fprintf(stderr, "Field %s not permitted on filter operation\n", field_name);
-                    return;
-                }
-
-                if (strcmp(comparison_type, "ge") == 0) {
-                    if (data <= comparison_number) {
-                        county_cleanup(county);
-                        array_list_nullify_index(county_data, i);
-                    }
-                } else if (strcmp(comparison_type, "le") == 0) {
-                    if (data >= comparison_number) {
-                        county_cleanup(county);
-                        array_list_nullify_index(county_data, i);
-                    }
-                }
-            }
-
-            printf("Filter: %s %s %d (%d entries)\n", field_name, comparison_type, comparison_number,
-                   county_data->real_item_count);
-
+            operation_filter(county_data, arguments);
         }
-
     } else {
         fprintf(stderr, "Invalid operation syntax: [%s] Skipping operation...\n", operation);
     }

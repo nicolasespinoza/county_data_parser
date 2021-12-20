@@ -5,13 +5,12 @@
 #include <string.h>
 
 struct arraylist* array_list_new(size_t data_type_size) {
-    struct arraylist* list;
-    list = malloc(sizeof(struct arraylist));
+    struct arraylist* list = malloc(sizeof(struct arraylist));
     list->data_type_size = data_type_size;
     list->item_capacity = 1;
     list->number_of_items = 0;
+    list->real_item_count = 0;
     list->data = malloc(data_type_size * (list->item_capacity));
-
     return list;
 }
 

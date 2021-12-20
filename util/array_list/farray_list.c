@@ -4,8 +4,7 @@
 #include <stdlib.h>
 
 struct farraylist* farray_list_new(size_t data_type_size) {
-    struct farraylist* list;
-    list = malloc(sizeof(struct farraylist));
+    struct farraylist* list = malloc(sizeof(struct farraylist));
     list->data_type_size = data_type_size;
     list->item_capacity = 1;
     list->number_of_items = 0;

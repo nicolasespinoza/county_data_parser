@@ -80,7 +80,7 @@ int main(int number_of_arguments, char* arguments[]) {
         struct arraylist* operations = parse_operations_file(operations_file_name);
 
         for (int i = 0; i < operations->number_of_items; i++) {
-            char* operation_string = (char*) array_list_get_item(operations, i);
+            char* operation_string = array_list_get_item(operations, i);
             handle_operation(county_data, operation_string);
         }
 
@@ -89,6 +89,5 @@ int main(int number_of_arguments, char* arguments[]) {
     } else {
         printf("Syntax: ./a.out <demographics file> <operations file>\n");
     }
-
     return 0;
 }

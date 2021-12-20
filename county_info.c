@@ -60,6 +60,7 @@ int safe_data_fetch_int(struct arraylist* split_data, int index) {
     if (converted == -1) {
         return -404404404;
     }
+    free(data_no_quotes);
     return converted;
 }
 
@@ -75,6 +76,7 @@ float safe_data_fetch_float(struct arraylist* split_data, int index) {
         }
         return -1.0f;
     }
+    free(data_no_quotes);
     return converted;
 }
 
@@ -91,7 +93,8 @@ struct county_info* county_create_from_line(char* line, int line_count) {
         int general_index = iarray_list_get_item(county->general_indexes, i);
         char* converted = safe_data_fetch_string(split_data, general_index);
         if (converted != NULL) {
-            array_list_add_to_end(county->general, strdup(converted));
+//            array_list_add_to_end(county->general, strdup(converted));
+            array_list_add_to_end(county->general, converted);
         } else {
             return NULL;
         }

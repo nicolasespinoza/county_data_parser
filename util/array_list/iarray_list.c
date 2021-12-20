@@ -4,8 +4,7 @@
 #include <stdlib.h>
 
 struct iarraylist* iarray_list_new(size_t data_type_size) {
-    struct iarraylist* list;
-    list = malloc(sizeof(struct iarraylist));
+    struct iarraylist* list = malloc(sizeof(struct iarraylist));
     list->data_type_size = data_type_size;
     list->item_capacity = 1;
     list->number_of_items = 0;
